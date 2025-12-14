@@ -104,42 +104,18 @@ class CreateOrderOutput(graphene.ObjectType):
 # Mutations
 class CreateCustomer(graphene.Mutation):
     """Mutation to create a single customer."""
+    customer = graphene.Field(CustomerType)
+
     class Arguments:
-        input = CustomerInput(required=True)
+        name = graphene.String(required=True)
+        email = graphene.String(required=True)
+        phone = graphene.String(required=True)
 
-    Output = CreateCustomerOutput
-
-    @staticmethod
-    def validate_phone(phone):
-        """Validate phone number format."""
-        if not phone:
-            return True
-        pattern = r'^(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$'
-        return bool(re.match(pattern, phone))
-
-    @staticmethod
-    def mutate(root, info, input):
+    def mutate(self, info, name, email, phone):
         """Create a new customer."""
-        # Validate email uniqueness
-        if Customer.objects.filter(email=input.email).exists():
-            raise ValidationError("Email already exists")
-
-        # Validate phone format
-        if input.phone and not CreateCustomer.validate_phone(input.phone):
-            raise ValidationError(
-                "Phone number must be in format: +1234567890 or 123-456-7890"
-            )
-
-        customer = Customer.objects.create(
-            name=input.name,
-            email=input.email,
-            phone=input.phone or None
-        )
-
-        return CreateCustomerOutput(
-            customer=customer,
-            message="Customer created successfully"
-        )
+        customer = Customer(name=name, email=email, phone=phone)
+        customer.save()
+        return CreateCustomer(customer=customer)
 
 
 class BulkCreateCustomers(graphene.Mutation):
