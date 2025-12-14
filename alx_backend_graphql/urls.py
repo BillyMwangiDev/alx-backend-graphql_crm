@@ -1,5 +1,5 @@
 """
-URL configuration for alx_backend_graphql_crm project.
+URL configuration for alx_backend_graphql project.
 """
 from django.contrib import admin
 from django.urls import path
