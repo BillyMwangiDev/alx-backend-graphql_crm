@@ -15,6 +15,13 @@ from .filters import CustomerFilter, ProductFilter, OrderFilter
 
 
 # Node Types
+class CustomerType(DjangoObjectType):
+    """GraphQL type for Customer model."""
+    class Meta:
+        model = Customer
+        fields = ("id", "name", "email", "phone")
+
+
 class CustomerNode(DjangoObjectType):
     """GraphQL node for Customer model."""
     class Meta:
@@ -74,13 +81,13 @@ class OrderInput(graphene.InputObjectType):
 # Output Types
 class CreateCustomerOutput(graphene.ObjectType):
     """Output type for CreateCustomer mutation."""
-    customer = graphene.Field(CustomerNode)
+    customer = graphene.Field(CustomerType)
     message = graphene.String()
 
 
 class BulkCreateCustomersOutput(graphene.ObjectType):
     """Output type for BulkCreateCustomers mutation."""
-    customers = graphene.List(CustomerNode)
+    customers = graphene.List(CustomerType)
     errors = graphene.List(graphene.String)
 
 
@@ -261,8 +268,15 @@ class Query(graphene.ObjectType):
     """Query class for CRM app."""
     hello = graphene.String(default_value="Hello, GraphQL!")
 
+    # Simple list query for customers
+    all_customers = graphene.List(CustomerType)
+
+    def resolve_all_customers(self, info):
+        """Resolve all customers."""
+        return Customer.objects.all()
+
     # Filtered queries using DjangoFilterConnectionField
-    all_customers = DjangoFilterConnectionField(
+    all_customers_filtered = DjangoFilterConnectionField(
         CustomerNode,
         filterset_class=CustomerFilter
     )

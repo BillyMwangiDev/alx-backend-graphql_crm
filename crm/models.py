@@ -8,19 +8,9 @@ from django.utils import timezone
 
 class Customer(models.Model):
     """Customer model with name, email, and phone."""
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=100)
     email = models.EmailField(unique=True, validators=[EmailValidator()])
-    phone = models.CharField(
-        max_length=20,
-        blank=True,
-        null=True,
-        validators=[
-            RegexValidator(
-                regex=r'^(\+?\d{1,3}[-.\s]?)?\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$',
-                message="Phone number must be in format: +1234567890 or 123-456-7890"
-            )
-        ]
-    )
+    phone = models.CharField(max_length=15, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -29,7 +19,7 @@ class Customer(models.Model):
         db_table = 'customers'
 
     def __str__(self):
-        return f"{self.name} ({self.email})"
+        return self.name
 
 
 class Product(models.Model):
