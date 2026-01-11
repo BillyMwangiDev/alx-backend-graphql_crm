@@ -1,0 +1,1 @@
+0 8 * * * /path/to/python /path/to/send_order_reminders.py

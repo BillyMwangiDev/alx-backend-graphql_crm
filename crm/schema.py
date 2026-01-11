@@ -239,6 +239,41 @@ class CreateOrder(graphene.Mutation):
         return CreateOrderOutput(order=order)
 
 
+# Output Type for UpdateLowStockProducts
+class UpdateLowStockProductsOutput(graphene.ObjectType):
+    """Output type for UpdateLowStockProducts mutation."""
+    updated_products = graphene.List(ProductNode)
+    message = graphene.String()
+
+
+class UpdateLowStockProducts(graphene.Mutation):
+    """Mutation to update low-stock products (stock < 10) by incrementing stock by 10."""
+    class Arguments:
+        pass
+
+    Output = UpdateLowStockProductsOutput
+
+    @staticmethod
+    def mutate(root, info):
+        """Query products with stock < 10 and increment their stock by 10."""
+        # Query products with stock < 10
+        low_stock_products = Product.objects.filter(stock__lt=10)
+        
+        # Update stock by incrementing by 10
+        updated_products = []
+        for product in low_stock_products:
+            product.stock += 10
+            product.save()
+            updated_products.append(product)
+        
+        message = f"Successfully updated {len(updated_products)} low-stock products"
+        
+        return UpdateLowStockProductsOutput(
+            updated_products=updated_products,
+            message=message
+        )
+
+
 # Query Class
 class Query(graphene.ObjectType):
     """Query class for CRM app."""
@@ -273,4 +308,5 @@ class Mutation(graphene.ObjectType):
     bulk_create_customers = BulkCreateCustomers.Field()
     create_product = CreateProduct.Field()
     create_order = CreateOrder.Field()
+    update_low_stock_products = UpdateLowStockProducts.Field()
 

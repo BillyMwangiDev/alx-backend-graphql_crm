@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     # Third-party apps
     'graphene_django',
     'django_filters',
+    'django_crontab',
     # Local apps
     'crm',
 ]
@@ -139,5 +140,11 @@ GRAPHENE = {
         'graphene_django.extras.CountMiddleware',
     ],
 }
+
+# Cron Jobs Configuration
+CRONJOBS = [
+    ('*/5 * * * *', 'crm.cron.log_crm_heartbeat'),
+    ('0 */12 * * *', 'crm.cron.update_low_stock'),
+]
 
 
