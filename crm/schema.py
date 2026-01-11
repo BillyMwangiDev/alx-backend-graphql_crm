@@ -10,7 +10,8 @@ from django.utils import timezone
 from decimal import Decimal
 import re
 
-from crm.models import Customer, Product, Order
+from crm.models import Customer, Order
+from crm.models import Product
 from .filters import CustomerFilter, ProductFilter, OrderFilter
 
 
