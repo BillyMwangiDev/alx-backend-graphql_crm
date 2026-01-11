@@ -1,8 +1,10 @@
 """
 Celery tasks for CRM app.
 """
+from datetime import datetime
 from celery import shared_task
 from django.utils import timezone
+import requests
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
 
